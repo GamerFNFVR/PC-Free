@@ -126,12 +126,9 @@ Asegúrate de que `Docker Root Dir` sea `/tmp/docker-data`.
 
 ---
 
-## 🧱 Archivo `windows10.yml`
+## 🧱 Docker Compose configuration
 
 ```yaml
-# Antes de ejecutar docker-compose up, ejecuta:
-# bash check_github_follow.sh || exit 1
-# Si no sigues a https://github.com/jephersonRD, el entorno no se iniciará.
 services:
   windows:
     image: dockurr/windows
@@ -140,8 +137,11 @@ services:
       VERSION: "10"
       USERNAME: ${WINDOWS_USERNAME}
       PASSWORD: ${WINDOWS_PASSWORD}
-      RAM_SIZE: "10G"
+      RAM_SIZE: "4G"
       CPU_CORES: "4"
+    network_mode: bridge
+    dns:
+      - 168.63.129.16
     cap_add:
       - NET_ADMIN
     ports:
@@ -153,7 +153,7 @@ services:
     devices:
       - "/dev/kvm:/dev/kvm"
       - "/dev/net/tun:/dev/net/tun"
-    stop_grace_period: 2m
+    stop_grace_period: 999m
     restart: always
 
 volumes:
@@ -183,7 +183,7 @@ echo ".env" >> .gitignore
 ### Iniciar por primera vez
 
 ```bash
-docker-compose -f windows10.yml up
+docker compose up
 ```
 
 ### 🔌 Apagar la PC
@@ -220,7 +220,7 @@ docker stop windows
 Start the Windows container:
 
 ```bash
-docker-compose -f windows10.yml up -d
+docker compose up -d
 ```
 
 ### Stop Windows Environment
@@ -254,7 +254,7 @@ Press Ctrl+C to exit log view.
 Remove container and all data volumes:
 
 ```bash
-docker-compose -f windows10.yml down -v
+docker compose down
 ```
 
 **⚠️ Warning**: This deletes all Windows data permanently.
@@ -265,7 +265,7 @@ docker-compose -f windows10.yml down -v
 
 ### Customize System Resources
 
-Edit `windows10.yml` to adjust resources:
+Edit `docker-compose.yml` to adjust resources:
 
 ```yaml
 environment:
@@ -370,6 +370,14 @@ Check Docker logs for errors:
 docker logs windows
 ```
 
+If the logs say `Could not resolve host`, the container uses Docker's default bridge with the Codespaces DNS resolver set explicitly. Recreate it with the default Compose file:
+
+```bash
+docker compose up -d --force-recreate
+```
+
+The Windows web console and RDP are published on Codespace ports 8006 and 3389.
+
 Verify KVM access (Linux):
 
 ```bash
@@ -385,10 +393,15 @@ ls -la /dev/kvm
 
 ### Cannot Access Port 8006
 
-1. Go to "Ports" tab in Codespace
-2. Make port 8006 visibility "Public"
-3. Click globe icon to open in browser
-4. Check firewall settings if on local Docker
+In the Codespace's **Ports** panel, forward port `8006` if it is not already listed, then select **Open in Browser**. Keep the port **Private** for normal use; only change visibility if you intentionally want to share the Windows console. Port `3389` is optional and is only needed for an RDP client.
+
+Confirm the console is responding inside the Codespace:
+
+```bash
+curl -I http://127.0.0.1:8006/
+```
+
+If this returns `200 OK` but the forwarded page does not open, remove the `8006` entry from the **Ports** panel, forward `8006` again, and open the new forwarded address. For local Docker, check that host port `8006` is not already in use.
 
 ### Storage Full Error
 
