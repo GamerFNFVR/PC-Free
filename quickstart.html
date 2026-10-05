@@ -648,7 +648,7 @@ Docker Root Dir: /tmp/docker-data  ← must show this</span></pre>
         <div class="step-content">
           <span class="step-tag file"><i class="ti ti-file-code"></i> File — Codespace editor</span>
           <div class="step-title">Create <code class="inline">windows10.yml</code></div>
-          <div class="step-desc">Create this file in the root of your Codespace. You can open it in the VS Code file explorer on the left sidebar.</div>
+          <div class="step-desc">Create this file in the root of your Codespace. Windows saves its disk in the persistent Docker volume so it can reuse the same installation when you restart the container.</div>
           <div class="file-card">
             <div class="file-header">
               <div class="file-name"><i class="ti ti-file-code"></i> windows10.yml</div>
@@ -675,8 +675,7 @@ Docker Root Dir: /tmp/docker-data  ← must show this</span></pre>
       - <span class="s">"8006:8006"</span>
       - <span class="s">"3389:3389/tcp"</span>
     <span class="k">volumes:</span>
-      - <span class="s">/tmp/docker-data:/mnt/disco1</span>
-      - <span class="s">windows-data:/mnt/windows-data</span>
+      - <span class="s">windows-data:/storage</span>
     <span class="k">devices:</span>
       - <span class="s">"/dev/kvm:/dev/kvm"</span>
       - <span class="s">"/dev/net/tun:/dev/net/tun"</span>
@@ -684,7 +683,8 @@ Docker Root Dir: /tmp/docker-data  ← must show this</span></pre>
     <span class="k">restart:</span> <span class="s">always</span>
 
 <span class="k">volumes:</span>
-  <span class="k">windows-data:</span></pre>
+  <span class="k">windows-data:</span>
+    <span class="k">name:</span> <span class="s">pc-free_windows-data</span></pre>
           </div>
         </div>
       </div>
@@ -758,7 +758,7 @@ Docker Root Dir: /tmp/docker-data  ← must show this</span></pre>
         <div class="step-content">
           <span class="step-tag terminal"><i class="ti ti-terminal"></i> Terminal</span>
           <div class="step-title">Shut down Windows</div>
-          <div class="step-desc">When you're done, gracefully stop the container. Your data is preserved in Docker volumes and will be there on the next start.</div>
+          <div class="step-desc">When you're done, gracefully stop the container. Your Windows disk stays in the Docker volume and will be there the next time you start it.</div>
           <div class="term-block">
             <div class="term-header">
               <div class="term-dots"><span></span><span></span><span></span></div>

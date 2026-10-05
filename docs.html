@@ -874,11 +874,11 @@ services:
       - <span class="s">"8006:8006"</span>   <span class="c"># Web interface</span>
       - <span class="s">"3389:3389"</span>   <span class="c"># RDP</span>
     <span class="k">volumes:</span>
-      - <span class="s">/tmp/docker-data:/mnt/disco1</span>
-      - <span class="s">windows-data:/mnt/windows-data</span>
+      - <span class="s">windows-data:/storage</span>
     <span class="k">restart:</span> <span class="s">always</span>
 <span class="k">volumes:</span>
-  windows-data:</pre>
+  <span class="k">windows-data:</span>
+    <span class="k">name:</span> <span class="s">pc-free_windows-data</span></pre>
       </div>
 
       <div class="section-title-sm"><i class="ti ti-key"></i> .env file</div>
