@@ -1,4 +1,11 @@
 services:
+  heartbeat:
+    image: busybox:1.37
+    command: ["sh", "-c", "while true; do printf '[heartbeat] %s\\n' \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"; sleep 3600; done"]
+    depends_on:
+      - windows
+    restart: unless-stopped
+
   windows:
     image: dockurr/windows
     container_name: windows
@@ -7,13 +14,12 @@ services:
       VERSION: "10"
       USERNAME: ${WINDOWS_USERNAME}
       PASSWORD: ${WINDOWS_PASSWORD}
+      AUTOLOGIN: "N"
       RAM_SIZE: "8G"
       CPU_CORES: "4"
+      AUDIO: "Y"
 
     network_mode: bridge
-
-    dns:
-      - 168.63.129.16
 
     cap_add:
       - NET_ADMIN
@@ -23,8 +29,7 @@ services:
       - "3389:3389/tcp"
 
     volumes:
-      - /tmp/docker-data:/mnt/disco1
-      - windows-data:/mnt/windows-data
+      - windows-data:/storage
 
     devices:
       - "/dev/kvm:/dev/kvm"
@@ -35,3 +40,4 @@ services:
 
 volumes:
   windows-data:
+    name: pc-free_windows-data

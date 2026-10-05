@@ -82,47 +82,9 @@ For local Docker installation, see the complete guide below.
 
 ## Guía Rápida
 
-### 1️⃣ Verifica el almacenamiento disponible
+Docker Compose monta el volumen persistente `pc-free_windows-data` en `/storage`, donde `dockurr/windows` guarda el disco virtual y los datos de Windows. El volumen sobrevive al detener y volver a iniciar el contenedor. No ejecutes `docker compose down -v` ni elimines los volúmenes de Docker si quieres conservar Windows.
 
-```bash
-df -h
-```
-
-Escoge la partición con más espacio libre.
-
-### 2️⃣ Crea la carpeta de datos para Docker
-
-```bash
-sudo mkdir -p /tmp/docker-data
-```
-
-### 3️⃣ Configura Docker
-
-Edita el archivo:
-
-```bash
-sudo nano /etc/docker/daemon.json
-```
-
-Agrega:
-
-```json
-{
-  "data-root": "/tmp/docker-data"
-}
-```
-
-### 4️⃣ Reinicia tu Codespace
-
-Para aplicar los cambios de configuración.
-
-### 5️⃣ Verifica Docker
-
-```bash
-docker info
-```
-
-Asegúrate de que `Docker Root Dir` sea `/tmp/docker-data`.
+Para una instalación de Windows existente, abre `netplwiz`, activa **Users must enter a user name and password to use this computer** y reinicia Windows. La opción `AUTOLOGIN: "N"` en Compose evita el inicio de sesión automático en instalaciones nuevas; la configuración ya guardada en el volumen persistente debe desactivarse dentro de Windows.
 
 ---
 
@@ -137,8 +99,10 @@ services:
       VERSION: "10"
       USERNAME: ${WINDOWS_USERNAME}
       PASSWORD: ${WINDOWS_PASSWORD}
+      AUTOLOGIN: "N"
       RAM_SIZE: "4G"
       CPU_CORES: "4"
+      AUDIO: "Y"
     network_mode: bridge
     dns:
       - 168.63.129.16
@@ -148,8 +112,7 @@ services:
       - "8006:8006"
       - "3389:3389/tcp"
     volumes:
-      - /tmp/docker-data:/mnt/disco1
-      - windows-data:/mnt/windows-data
+      - windows-data:/storage
     devices:
       - "/dev/kvm:/dev/kvm"
       - "/dev/net/tun:/dev/net/tun"
@@ -158,7 +121,12 @@ services:
 
 volumes:
   windows-data:
+    name: pc-free_windows-data
 ```
+
+---
+
+Para transmitir el audio de Windows al navegador, `AUDIO: "Y"` habilita la opción en el visor web. Después, activa **Audio** en **Settings → Advanced**. No es necesario instalar PulseAudio en el Codespace.
 
 ---
 
@@ -249,15 +217,15 @@ docker logs -f windows
 
 Press Ctrl+C to exit log view.
 
-### Complete Removal
+### Remove the Container
 
-Remove container and all data volumes:
+Remove the container while keeping the Windows installation:
 
 ```bash
 docker compose down
 ```
 
-**⚠️ Warning**: This deletes all Windows data permanently.
+The Windows disk remains in the Docker volume. To permanently delete the installation, run `docker compose down -v`; this also deletes the Windows data, so back up anything you need first.
 
 ---
 
