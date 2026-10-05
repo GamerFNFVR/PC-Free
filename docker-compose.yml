@@ -29,7 +29,11 @@ services:
       - "3389:3389/tcp"
 
     volumes:
-      - ./windows-data:/storage
+      - type: bind
+        source: ./windows-data
+        target: /storage
+        bind:
+          create_host_path: false
 
     devices:
       - "/dev/kvm:/dev/kvm"
