@@ -807,50 +807,20 @@ code {
           <span class="code-lang">bash</span>
           <button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> Copy</button>
         </div>
-        <pre>df -h</pre>
+        <pre>df -h /workspaces</pre>
       </div>
-      <p class="prose">Pick the partition with the most free space.</p>
+      <p class="prose">Windows data is stored in the Codespace workspace, so make sure <code>/workspaces</code> has enough free space for the download and virtual disk.</p>
 
-      <div class="section-title-sm"><i class="ti ti-folder-plus"></i> 2. Create Docker data folder</div>
+      <div class="section-title-sm"><i class="ti ti-folder-plus"></i> 2. Create persistent Windows data folder</div>
       <div class="code-block">
         <div class="code-header">
           <div class="code-dots"><span></span><span></span><span></span></div>
           <span class="code-lang">bash</span>
           <button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> Copy</button>
         </div>
-        <pre>sudo mkdir -p /tmp/docker-data</pre>
+        <pre>mkdir -p windows-data</pre>
       </div>
-
-      <div class="section-title-sm"><i class="ti ti-settings"></i> 3. Configure Docker daemon</div>
-      <div class="code-block">
-        <div class="code-header">
-          <div class="code-dots"><span></span><span></span><span></span></div>
-          <span class="code-lang">bash</span>
-          <button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> Copy</button>
-        </div>
-        <pre>sudo nano /etc/docker/daemon.json</pre>
-      </div>
-      <p class="prose">Add the following content:</p>
-      <div class="code-block">
-        <div class="code-header">
-          <div class="code-dots"><span></span><span></span><span></span></div>
-          <span class="code-lang">json</span>
-          <button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> Copy</button>
-        </div>
-        <pre>{
-  <span class="k">"data-root"</span>: <span class="s">"/tmp/docker-data"</span>
-}</pre>
-      </div>
-
-      <div class="section-title-sm"><i class="ti ti-refresh"></i> 4. Restart Codespace, then verify Docker</div>
-      <div class="code-block">
-        <div class="code-header">
-          <div class="code-dots"><span></span><span></span><span></span></div>
-          <span class="code-lang">bash</span>
-          <button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> Copy</button>
-        </div>
-        <pre>docker info <span class="c"># Docker Root Dir should be /tmp/docker-data</span></pre>
-      </div>
+      <p class="prose">The Compose file mounts this workspace folder into the Windows container. It persists when the Codespace stops and starts. Deleting the Codespace or this folder permanently removes the saved Windows data.</p>
 
       <div class="section-title-sm"><i class="ti ti-file-text"></i> windows10.yml</div>
       <div class="code-block">
@@ -874,11 +844,9 @@ services:
       - <span class="s">"8006:8006"</span>   <span class="c"># Web interface</span>
       - <span class="s">"3389:3389"</span>   <span class="c"># RDP</span>
     <span class="k">volumes:</span>
-      - <span class="s">windows-data:/storage</span>
+      - <span class="s">./windows-data:/storage</span>
     <span class="k">restart:</span> <span class="s">always</span>
-<span class="k">volumes:</span>
-  <span class="k">windows-data:</span>
-    <span class="k">name:</span> <span class="s">pc-free_windows-data</span></pre>
+</pre>
       </div>
 
       <div class="section-title-sm"><i class="ti ti-key"></i> .env file</div>

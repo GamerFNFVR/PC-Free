@@ -535,14 +535,14 @@ pre .n      { color: #fbbf24; }
         <div class="step-content">
           <span class="step-tag terminal"><i class="ti ti-terminal"></i> Terminal</span>
           <div class="step-title">Check available storage</div>
-          <div class="step-desc">Open the Codespace terminal and run this to see available disk partitions. Pick the one with the most free space.</div>
+          <div class="step-desc">Check the available space on <code class="inline">/workspaces</code>, where the persistent Windows files will be stored.</div>
           <div class="term-block">
             <div class="term-header">
               <div class="term-dots"><span></span><span></span><span></span></div>
               <span class="term-label">codespace ~ bash</span>
               <button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> Copy</button>
             </div>
-            <pre><span class="prompt">$</span> <span class="cmd">df</span> <span class="flag">-h</span></pre>
+            <pre><span class="prompt">$</span> <span class="cmd">df</span> <span class="flag">-h</span> <span class="path">/workspaces</span></pre>
           </div>
         </div>
       </div>
@@ -555,91 +555,20 @@ pre .n      { color: #fbbf24; }
         </div>
         <div class="step-content">
           <span class="step-tag terminal"><i class="ti ti-terminal"></i> Terminal</span>
-          <div class="step-title">Create Docker data folder</div>
-          <div class="step-desc">Create the directory that Docker will use to store all Windows data.</div>
+          <div class="step-title">Create persistent Windows data folder</div>
+          <div class="step-desc">Windows storage lives in the Codespace workspace, so it remains available when the Codespace stops and starts.</div>
           <div class="term-block">
             <div class="term-header">
               <div class="term-dots"><span></span><span></span><span></span></div>
               <span class="term-label">codespace ~ bash</span>
               <button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> Copy</button>
             </div>
-            <pre><span class="prompt">$</span> <span class="cmd">sudo mkdir</span> <span class="flag">-p</span> <span class="path">/tmp/docker-data</span></pre>
+            <pre><span class="prompt">$</span> <span class="cmd">mkdir</span> <span class="flag">-p</span> <span class="path">windows-data</span></pre>
           </div>
         </div>
       </div>
 
-      <!-- ═══ STEP 4: CONFIGURE DOCKER ═══ -->
-      <div class="step-row">
-        <div class="step-timeline">
-          <div class="step-dot terminal">3</div>
-          <div class="step-line"></div>
-        </div>
-        <div class="step-content">
-          <span class="step-tag terminal"><i class="ti ti-terminal"></i> Terminal</span>
-          <div class="step-title">Configure Docker daemon</div>
-          <div class="step-desc">Open the daemon config file, paste the JSON below, then save with <code class="inline">Ctrl+O → Enter → Ctrl+X</code>.</div>
-          <div class="term-block">
-            <div class="term-header">
-              <div class="term-dots"><span></span><span></span><span></span></div>
-              <span class="term-label">codespace ~ bash</span>
-              <button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> Copy</button>
-            </div>
-            <pre><span class="prompt">$</span> <span class="cmd">sudo nano</span> <span class="path">/etc/docker/daemon.json</span></pre>
-          </div>
-          <div style="margin-top:10px;"></div>
-          <div class="file-card">
-            <div class="file-header">
-              <div class="file-name"><i class="ti ti-file-code"></i> /etc/docker/daemon.json</div>
-              <button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> Copy</button>
-            </div>
-            <pre>{
-  <span class="k">"data-root"</span>: <span class="s">"/tmp/docker-data"</span>
-}</pre>
-          </div>
-        </div>
-      </div>
-
-      <!-- ═══ STEP 5: RESTART ═══ -->
-      <div class="step-row">
-        <div class="step-timeline">
-          <div class="step-dot warn"><i class="ti ti-refresh" style="font-size:14px;"></i></div>
-          <div class="step-line"></div>
-        </div>
-        <div class="step-content">
-          <span class="step-tag warn"><i class="ti ti-refresh"></i> Action required</span>
-          <div class="step-title">Restart your Codespace</div>
-          <div class="step-desc">The Docker daemon config won't take effect until you restart. Go to <strong>Command Palette → Codespaces: Restart</strong>, or close and reopen the Codespace from GitHub.</div>
-          <div class="warn-box">
-            <i class="ti ti-alert-triangle"></i>
-            <p>After restarting, open the terminal again and continue with the next step.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- ═══ STEP 6: VERIFY DOCKER ═══ -->
-      <div class="step-row">
-        <div class="step-timeline">
-          <div class="step-dot terminal">4</div>
-          <div class="step-line"></div>
-        </div>
-        <div class="step-content">
-          <span class="step-tag terminal"><i class="ti ti-terminal"></i> Terminal</span>
-          <div class="step-title">Verify Docker configuration</div>
-          <div class="step-desc">Confirm that <code class="inline">Docker Root Dir</code> shows <code class="inline">/tmp/docker-data</code> in the output.</div>
-          <div class="term-block">
-            <div class="term-header">
-              <div class="term-dots"><span></span><span></span><span></span></div>
-              <span class="term-label">codespace ~ bash</span>
-              <button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy"></i> Copy</button>
-            </div>
-            <pre><span class="prompt">$</span> <span class="cmd">docker info</span>
-<span class="c">...
-Docker Root Dir: /tmp/docker-data  ← must show this</span></pre>
-          </div>
-        </div>
-      </div>
-
-      <!-- ═══ STEP 7: CREATE YML ═══ -->
+      <!-- ═══ STEP 4: CREATE YML ═══ -->
       <div class="step-row">
         <div class="step-timeline">
           <div class="step-dot file"><i class="ti ti-file-code" style="font-size:14px;"></i></div>
@@ -648,7 +577,7 @@ Docker Root Dir: /tmp/docker-data  ← must show this</span></pre>
         <div class="step-content">
           <span class="step-tag file"><i class="ti ti-file-code"></i> File — Codespace editor</span>
           <div class="step-title">Create <code class="inline">windows10.yml</code></div>
-          <div class="step-desc">Create this file in the root of your Codespace. Windows saves its disk in the persistent Docker volume so it can reuse the same installation when you restart the container.</div>
+          <div class="step-desc">Create this file in the root of your Codespace. Windows saves its disk in the persistent <code class="inline">windows-data/</code> workspace folder. Stopping or recreating the container keeps the data; deleting the Codespace does not.</div>
           <div class="file-card">
             <div class="file-header">
               <div class="file-name"><i class="ti ti-file-code"></i> windows10.yml</div>
@@ -675,21 +604,19 @@ Docker Root Dir: /tmp/docker-data  ← must show this</span></pre>
       - <span class="s">"8006:8006"</span>
       - <span class="s">"3389:3389/tcp"</span>
     <span class="k">volumes:</span>
-      - <span class="s">windows-data:/storage</span>
+      - <span class="s">./windows-data:/storage</span>
     <span class="k">devices:</span>
       - <span class="s">"/dev/kvm:/dev/kvm"</span>
       - <span class="s">"/dev/net/tun:/dev/net/tun"</span>
     <span class="k">stop_grace_period:</span> <span class="s">2m</span>
     <span class="k">restart:</span> <span class="s">always</span>
 
-<span class="k">volumes:</span>
-  <span class="k">windows-data:</span>
-    <span class="k">name:</span> <span class="s">pc-free_windows-data</span></pre>
+</pre>
           </div>
         </div>
       </div>
 
-      <!-- ═══ STEP 8: CREATE .ENV ═══ -->
+      <!-- ═══ STEP 5: CREATE .ENV ═══ -->
       <div class="step-row">
         <div class="step-timeline">
           <div class="step-dot file"><i class="ti ti-key" style="font-size:14px;"></i></div>
@@ -724,7 +651,7 @@ Docker Root Dir: /tmp/docker-data  ← must show this</span></pre>
         </div>
       </div>
 
-      <!-- ═══ STEP 9: RUN ═══ -->
+      <!-- ═══ STEP 6: RUN ═══ -->
       <div class="step-row">
         <div class="step-timeline">
           <div class="step-dot run"><i class="ti ti-player-play-filled" style="font-size:14px;"></i></div>
@@ -750,7 +677,7 @@ Docker Root Dir: /tmp/docker-data  ← must show this</span></pre>
         </div>
       </div>
 
-      <!-- ═══ STEP 10: STOP ═══ -->
+      <!-- ═══ STEP 7: STOP ═══ -->
       <div class="step-row">
         <div class="step-timeline">
           <div class="step-dot terminal"><i class="ti ti-power" style="font-size:14px;"></i></div>

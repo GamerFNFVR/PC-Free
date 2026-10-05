@@ -29,7 +29,7 @@ services:
       - "3389:3389/tcp"
 
     volumes:
-      - windows-data:/storage
+      - ./windows-data:/storage
 
     devices:
       - "/dev/kvm:/dev/kvm"
@@ -37,7 +37,3 @@ services:
 
     stop_grace_period: 2m
     restart: always
-
-volumes:
-  windows-data:
-    name: pc-free_windows-data

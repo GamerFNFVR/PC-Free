@@ -82,7 +82,7 @@ For local Docker installation, see the complete guide below.
 
 ## Guía Rápida
 
-Docker Compose monta el volumen persistente `pc-free_windows-data` en `/storage`, donde `dockurr/windows` guarda el disco virtual y los datos de Windows. La configuración fija el nombre para que Compose siga encontrando la misma instalación al recrear el contenedor. No ejecutes `docker compose down -v` ni elimines ese volumen si quieres conservar Windows.
+Docker Compose monta la carpeta `windows-data/` del workspace en `/storage`. Así, el disco virtual, la descarga de Windows y los datos de Windows permanecen en los archivos del Codespace al detenerlo o recrear el contenedor. Esta carpeta está excluida de Git. No la elimines si quieres conservar Windows; eliminar el Codespace también elimina sus archivos.
 
 Para una instalación de Windows existente, abre `netplwiz`, activa **Users must enter a user name and password to use this computer** y reinicia Windows. La opción `AUTOLOGIN: "N"` en Compose evita el inicio de sesión automático en instalaciones nuevas; la configuración ya guardada en `windows-data/` debe desactivarse dentro de Windows.
 
@@ -112,16 +112,13 @@ services:
       - "8006:8006"
       - "3389:3389/tcp"
     volumes:
-      - windows-data:/storage
+      - ./windows-data:/storage
     devices:
       - "/dev/kvm:/dev/kvm"
       - "/dev/net/tun:/dev/net/tun"
     stop_grace_period: 999m
     restart: always
 
-volumes:
-  windows-data:
-    name: pc-free_windows-data
 ```
 
 ---
@@ -225,7 +222,7 @@ Remove the container while keeping the Windows installation:
 docker compose down
 ```
 
-The Windows disk remains in the `pc-free_windows-data` Docker volume. To permanently delete the installation, run `docker compose down -v`; this deletes the Windows data, so back up anything you need first.
+The Windows disk remains in the workspace folder `windows-data/` after `docker compose down`. To permanently delete the installation, stop the container and delete that folder. Back up anything you need first. Deleting the Codespace also deletes its workspace files.
 
 ---
 
@@ -300,7 +297,7 @@ environment:
 
 ### Can I install additional software?
 
-Yes! You have full administrator access. Installed software persists in the `pc-free_windows-data` Docker volume between restarts.
+Yes! You have full administrator access. Installed software persists in `windows-data/` between Codespace stops and container restarts.
 
 ### Does this work on GitHub free tier?
 
@@ -320,7 +317,7 @@ Your Windows environment runs in an isolated Docker container within your privat
 
 ### Can I access my files from outside?
 
-Yes, files stored in the `pc-free_windows-data` Docker volume persist between sessions. You can also mount external volumes or use cloud storage within Windows.
+Yes. Files in `windows-data/` persist when the Codespace stops and starts. They do not survive deleting the Codespace; back up important files elsewhere.
 
 ### What internet speed do I need?
 
